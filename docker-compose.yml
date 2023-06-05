@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=dishdb
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - .db:/var/lib/postgresql/data
+    restart: always
+
+  job4j_dish:
+    build: https://github.com/digest15/job4j_dish.git
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dishdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - JDBC_DRIVER=org.postgresql.Driver
+    container_name: job4j_dish
+    depends_on:
+      - db
+
